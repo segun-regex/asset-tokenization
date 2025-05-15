@@ -346,3 +346,39 @@
 (define-read-only (get-price-feed (asset-id uint))
   (map-get? price-feeds { asset-id: asset-id })
 )
+
+;; Get last claimed dividend amount
+(define-read-only (get-last-claim
+    (asset-id uint)
+    (claimer principal)
+  )
+  (default-to u0
+    (get last-claimed-amount
+      (map-get? dividend-claims {
+        asset-id: asset-id,
+        claimer: claimer,
+      })
+    ))
+)
+
+;; Private Helper Functions
+
+;; Get the next available asset ID
+(define-private (get-next-asset-id)
+  (default-to u1 (get-last-asset-id))
+)
+
+;; Get the next available proposal ID
+(define-private (get-next-proposal-id)
+  (default-to u1 (get-last-proposal-id))
+)
+
+;; Implement the get-last-asset-id function to return the current counter
+(define-private (get-last-asset-id)
+  (some (var-get last-asset-id))
+)
+
+;; Implement the get-last-proposal-id function to return the current counter
+(define-private (get-last-proposal-id)
+  (some (var-get last-proposal-id))
+)
